@@ -33,8 +33,9 @@ jobs:
             //      the PR does NOT carry the "type:docs" label.
             //
             //  ACTION:
-            //    • First offence  → add "spam" label + warning comment
-            //    • If "spam" label already present → close PR + comment
+            //    • First offence        → add "spam" label + warning comment
+            //    • Spam label present   → close PR + comment
+            //    • Conditions now clean → auto-remove "spam" label + notify
             // ================================================================
 
             const owner  = context.repo.owner;
@@ -80,9 +81,9 @@ jobs:
             });
             const labelNames = new Set(existingLabels.map(l => l.name.toLowerCase()));
 
-            const hasSpam        = labelNames.has('spam');
-            const hasAdvanced    = labelNames.has('level:advanced');
-            const hasDocs        = labelNames.has('type:docs');
+            const hasSpam     = labelNames.has('spam');
+            const hasAdvanced = labelNames.has('level:advanced');
+            const hasDocs     = labelNames.has('type:docs');
 
             // Also check if the PR title / body claims level:advanced
             const title = (context.payload.pull_request.title || '').toLowerCase();
@@ -102,12 +103,41 @@ jobs:
             console.log(`Condition A (tiny+advanced): ${condA}`);
             console.log(`Condition B (readme-only, no docs tag): ${condB}`);
 
+            // ── 5. PR passes all checks ───────────────────────────────────
             if (!condA && !condB) {
-              console.log('PR passed spam checks ✅');
+              // If PR was previously flagged but contributor has now fixed it,
+              // auto-remove the spam label and post a clearance message
+              if (hasSpam) {
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner, repo, issue_number: prNum, name: 'spam'
+                  });
+                  console.log(`Removed spam label from PR #${prNum} — conditions now clean.`);
+                } catch (e) {
+                  // Label may have already been removed manually — safe to ignore
+                  console.log(`Could not remove spam label (may already be gone): ${e.message}`);
+                }
+
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: prNum,
+                  body: [
+                    `## ✅ Spam Flag Cleared — @${author}`,
+                    ``,
+                    `Great news! This PR has been re-evaluated and now passes all of our quality checks.`,
+                    `The \`spam\` label has been automatically removed.`,
+                    ``,
+                    `A maintainer will review your PR shortly. Thanks for taking the time to improve it! 🙌`,
+                    ``,
+                    `_Automated check by PsycheCare Spam Detector 🤖_`
+                  ].join('\n')
+                });
+              } else {
+                console.log('PR passed spam checks ✅');
+              }
               return;
             }
 
-            // ── 5. Build a human-readable reason string ───────────────────
+            // ── 6. Build a human-readable reason string ───────────────────
             const reasons = [];
             if (condA)
               reasons.push(
@@ -123,7 +153,7 @@ jobs:
 
             const reasonBlock = reasons.join('\n');
 
-            // ── 6. First offence → warn; repeat offence → close ──────────
+            // ── 7. First offence → warn; repeat offence → close ──────────
             if (!hasSpam) {
               // Add spam label
               await github.rest.issues.addLabels({
@@ -143,7 +173,7 @@ jobs:
                   `### What to do next`,
                   `1. **Read** our [Contributing Guidelines](https://github.com/${owner}/${repo}/blob/main/CONTRIBUTING.md) carefully.`,
                   `2. **Fix** the issue(s) above and push a new commit to this PR.`,
-                  `3. **Remove** the \`spam\` label once the issues are resolved (or ask a maintainer).`,
+                  `3. The \`spam\` label will be **automatically removed** once your PR passes all checks.`,
                   ``,
                   `> ⚠️ If this PR is not updated and the \`spam\` label remains, it will be **automatically closed** on the next review cycle.`,
                   ``,
