@@ -15,41 +15,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Invalid CSRF token.");
     }
 
-    header('Content-Type: application/json');
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $subject = trim($_POST['subject'] ?? '');
+    $message = trim($_POST['message'] ?? '');
 
-    $name    = htmlspecialchars(trim($_POST['name']    ?? ''));
-    $email   = htmlspecialchars(trim($_POST['email']   ?? ''));
-    $subject = htmlspecialchars(trim($_POST['subject'] ?? ''));
-    $message = htmlspecialchars(trim($_POST['message'] ?? ''));
-
-    // Validate all four fields are present
     if (!$name || !$email || !$subject || !$message) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'All fields are required.']);
-        exit;
+        die("All fields are required.");
+    }
+
+    if (strlen($name) > 100) {
+        http_response_code(400);
+        die("Name must not exceed 100 characters.");
+    }
+
+    if (strlen($email) > 255) {
+        http_response_code(400);
+        die("Email must not exceed 255 characters.");
+    }
+
+    if (strlen($subject) > 255) {
+        http_response_code(400);
+        die("Subject must not exceed 255 characters.");
+    }
+
+    if (strlen($message) > 1000) {
+        http_response_code(400);
+        die("Message must not exceed 1000 characters.");
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Invalid email address.']);
-        exit;
+        die("Invalid email address.");
     }
 
     try {
         require_once __DIR__ . '/database.php';
         $db = getAuthDatabase();
 
-        $stmt = $db->prepare(
-            "INSERT INTO contact_messages (name, email, subject, message) VALUES (:name, :email, :subject, :message)"
-        );
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        if (!enforceRateLimit($db, "contact:" . $ip, 5, 60)) {
+            http_response_code(429);
+            die("Too many contact attempts. Please try again later.");
+        }
+
+        $stmt = $db->prepare("INSERT INTO contact_messages (name, email, subject, message) VALUES (:name, :email, :subject, :message)");
         $stmt->execute([
-            ':name'    => $name,
-            ':email'   => $email,
+            ':name' => $name,
+            ':email' => $email,
             ':subject' => $subject,
-            ':message' => $message,
+            ':message' => $message
         ]);
 
-        echo json_encode(['success' => true, 'message' => "Message received. Thank you, $name!"]);
+        echo "Message received. Thank you, " . htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8') . "!";
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => 'Database error. Please try again later.']);

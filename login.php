@@ -32,12 +32,14 @@ try {
     $ip  = getIPAddress();
     $rateKey = "login:" . $ip;
 
-    // ── Layer 1: IP-based rate limit (5 attempts per 15 min per IP) ───────────
+    // Check AND Increment atomically: 5 attempts per 15 minutes
     if (!enforceRateLimit($db, $rateKey, 5, 900)) {
         header("Location: login.html?error=rate_limit");
         exit();
     }
 
+    // ── Layer 1: IP-based rate limit (5 attempts per 15 min per IP) ───────────
+    // enforceRateLimit is already atomic and sufficient for this layer.
     $stmt = $db->prepare(
         "SELECT id, username, password_hash FROM users WHERE username = :username"
     );
@@ -63,7 +65,6 @@ try {
 
     // Failed attempt is already recorded atomically by enforceRateLimit.
     // If we reach here, it's just a regular invalid password.
-    // ── Record failure ────────────────────────────────────────────────────────
     if ($user) {
         incrementAccountAttempts($db, $user['id']);
     }
