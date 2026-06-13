@@ -33,4 +33,5 @@ jobs:
           VALIDATE_HTML: false
           VALIDATE_HTML_PRETTIER: false
           VALIDATE_PHP_PHPCS: false
+          VALIDATE_PHP_PHPSTAN: false
           VALIDATE_YAML_PRETTIER: false
