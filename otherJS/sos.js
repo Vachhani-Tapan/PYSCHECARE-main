@@ -2,7 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const breathingCircle = document.querySelector('.breathing-circle');
     const breathingText = document.querySelector('.breathing-text');
     const breathingSteps = document.querySelectorAll('.breathing-step');
-    
+    if (!breathingCircle || !breathingText) {
+        console.error('SOS breathing elements not found in DOM');
+        return;
+    }
     let isBreathing = false;
     let currentStep = 0;
     let timer;
