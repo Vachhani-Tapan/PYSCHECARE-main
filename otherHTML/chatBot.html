@@ -24,15 +24,22 @@
          performs the real session check.
     ──────────────────────────────────────────────────────────────────────── -->
     <script>
-        (function () {
-            if (typeof window.PSYCHECARE_TOKEN === 'undefined') {
-                // If accessed directly via chatBot.html (static/local view), bypass redirect to avoid downloading PHP files.
-                if (window.location.protocol === 'file:' || window.location.pathname.endsWith('.html')) {
-                    console.log("Static/Local HTML view: bypassing PHP Auth Guard.");
-                } else {
-                    window.location.replace('chatBot.php');
-                }
-            }
+       // AFTER (secure)
+(function () {
+    if (typeof window.PSYCHECARE_TOKEN === 'undefined') {
+        // Allow local static preview only; keep production behind PHP auth gateway.
+        const isLocalStatic =
+            window.location.protocol === 'file:' ||
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1';
+
+        if (isLocalStatic) {
+            console.log("Static/Local HTML view: bypassing PHP Auth Guard.");
+        } else {
+            window.location.replace('chatBot.php');
+        }
+    }
+})();
         })();
     </script>
 
