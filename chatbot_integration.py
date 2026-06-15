@@ -59,6 +59,10 @@ words = []
 classes = []
 model = None
 intents = {}
+
+# Lock for thread-safe model initialization
+_model_lock = threading.Lock()
+
 # ── Thread-safe context store ─────────────────────────────────────────────────────
 # Flask runs each request in a separate thread. Without a lock, concurrent
 # requests can corrupt the context dict or raise:
@@ -199,9 +203,11 @@ def get_chatbot_response(message, user_id="000"):
 
     # Make sure model is loaded
     if model is None:
-        success = load_chatbot_model()
-        if not success:
-            return "Sorry, the chatbot is not available at the moment."
+        with _model_lock:
+            if model is None:
+                success = load_chatbot_model()
+                if not success:
+                    return "Sorry, the chatbot is not available at the moment."
             
     # Detect language
     lang = detect_language(message)
