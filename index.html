@@ -6,13 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PsycheCare - Mental Health Support</title>
 
-    <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
-
     <link rel="stylesheet" href="style.css">
     
     <link rel="icon" href="Images/B_icon01.png">
-    <!-- FontAwesome for icons -->
-    <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -28,7 +24,7 @@
 
     <!-- +++ HEADER +++ -->
 
-        <header class="header">
+        <header class="header" id="top">
             <div class="logo-cantainer">
                 <h2 class="logo">PsycheCare.</h2>
             </div>
@@ -44,6 +40,10 @@
                         <li><a href="otherHTML/sos.html" class="sos-link"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> <span>SOS</span></a></li>
                     </ul>
                 </nav>
+
+                <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
 
                 <button class="hamBurger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav" tabindex="0">
                     <div class="line line1"></div>
@@ -70,6 +70,7 @@
                     <li><a href="otherHTML/statistics.html" class="mobile-view-list">STATISTICS</a></li>
                     <li><a href="#FOOTER" class="mobile-view-list">CONTACT</a></li>
                     <li><a href="login.html" class="mobile-view-list">LOGIN</a></li>
+                    <li><a href="otherHTML/sos.html" class="mobile-view-list sos-link"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> SOS</a></li>
                 </ul>
             </div>
 
@@ -100,7 +101,7 @@
                 </div>
 
                 <div class="explore-btn-cont">
-                    <a href="#SECTION_2"><button class="explore-btn">Explore <i class="fas fa-chevron-down" aria-hidden="true"></i></button></a>
+                    <a href="#section-2"><button class="explore-btn">Explore <i class="fas fa-chevron-down" aria-hidden="true"></i></button></a>
                     <a href="otherHTML/statistics.html"><button class="blog-btn">Statistics <i class="fas fa-chart-bar" aria-hidden="true"></i></button></a>
                 </div>
                 <div class="floating-shapes" aria-hidden="true">
@@ -176,7 +177,7 @@
                     <h3 class="card-head">Stay Happy</h3>
                     <p class="card-text">Do something that makes you happy <br>
                         <span class="link-cont">
-                            <a href="#">Learn more</a>
+                            <a href="otherHTML/happy.html">Learn more</a>
                             <i class="fas fa-long-arrow-alt-right arrow" aria-hidden="true"></i>
                         </span>
                     </p>
@@ -301,7 +302,12 @@
     </section>
     </main>
 
-
+    <!-- Accessible Back to Top Floating Button -->
+    <a href="#top" class="back-to-top" aria-label="Back to top" role="button" tabindex="0">
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </a>
     <!-- FOOTER -->
 
     <a id="FOOTER"></a>
@@ -333,19 +339,13 @@
                             I've used some free images from Flaticon and Freepik,
                             so here are the attributions for the authors.
                         </p>
-                        <button class="cross" aria-label="Close attributions">
+                       <!-- <button class="cross" aria-label="Close attributions">
                             <i class="fas fa-times" aria-hidden="true"></i>
-                        </button>
+                        </button>-->
+                       <button id="close-attributions" class="close-btn" aria-label="Close modal">&times;</button>
                     </div>
 
                     <ul class="contribution-list">
-                        <li><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
-                        <li><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
-                        <li><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
-                        <li><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
-                        <li><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
-                        <li><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
-                        <li><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
                         <li><div>Icons made by <a href="https://www.flaticon.com/authors/iconixar" title="iconixar">iconixar</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
                         <li><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
                         <li><div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
@@ -353,6 +353,21 @@
                 </div>
             </div>
         </div>
+
+<!--
+      <button id="close-attributions" class="close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <p>Special thanks to the talented creators for providing these free assets:</p>
+      <ul class="credits-list">
+        <li>Icons designed by <a href="https://www.flaticon.com/authors/freepik" target="_blank" rel="noopener">Freepik</a> from Flaticon</li>
+        <li>Icons designed by <a href="https://www.flaticon.com/authors/iconixar" target="_blank" rel="noopener">iconixar</a> from Flaticon</li>
+        <li>Icons designed by <a href="https://www.flaticon.com/authors/smashicons" target="_blank" rel="noopener">Smashicons</a> from Flaticon</li>
+      </ul>
+    </div>
+  </div>
+</dialog>  -->
 
         <div class="social-icon-cont">
             <div class="social-head">
@@ -370,9 +385,11 @@
 
         <p class="copy-rights">Thank You :)</p>
     </footer>
- 
+
     <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
+    <script src="otherJS/darkMode.js"></script>
     <script src="otherJS/hamberger.js"></script>
+    <script src="otherJS/accessibility.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
