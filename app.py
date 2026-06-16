@@ -95,4 +95,7 @@ def bad_request(error):
 
 if __name__ == "__main__":
     debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    # Provide a warning that app.run is insecure for production
+    import logging
+    logging.warning("You are using the development server. For production, use wsgi.py to ensure bounded thread scaling and prevent memory leaks.")
     app.run(host="0.0.0.0", port=5000, debug=debug_mode)
