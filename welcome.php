@@ -3,13 +3,32 @@ require_once __DIR__ . '/session_config.php';
 require_once __DIR__ . '/sanitize.php';
 session_start();
 
-if (!isset($_SESSION["username"])) {
+require_once __DIR__ . '/database.php';
+
+// Strict session check
+if (!isset($_SESSION["username"]) || !isset($_SESSION["user_id"])) {
     header("Location: login.html");
     exit();
 }
 
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Securely fetch user profile enforcing IDOR protections
+$profileData = null;
+try {
+    $db = getAuthDatabase();
+    
+    // The requesting user ID is taken strictly from the secure session, NOT from user input!
+    // This prevents malicious actors from tampering with request parameters to access other users.
+    $currentUserId = (int)$_SESSION["user_id"];
+    
+    // We enforce that the user can only fetch their own ID
+    $profileData = getUserProfileSecure($db, $currentUserId, $currentUserId);
+} catch (Exception $e) {
+    // Handle potential IDOR or DB errors securely without leaking info
+    $profileData = null;
 }
 ?>
 <!DOCTYPE html>
